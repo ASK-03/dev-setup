@@ -87,4 +87,55 @@ if $INSTALL_TOOLS; then
   fi
 fi
 
+# Install desktop applications
+if $INSTALL_DESKTOP; then
+  echo "🖥️ Installing desktop applications..."
+
+  # VS Code
+  read -p "Install VS Code? (y/n): " INSTALL_VSCODE
+  if [[ "$INSTALL_VSCODE" == "y" ]]; then
+    echo "🧠 Installing Visual Studio Code..."
+    wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+    sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
+    sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
+    sudo apt update
+    sudo apt install -y code
+    rm microsoft.gpg
+    echo "✅ VS Code installed."
+  fi
+
+  # Brave Browser
+  read -p "Install Brave browser? (y/n): " INSTALL_BRAVE
+  if [[ "$INSTALL_BRAVE" == "y" ]]; then
+    echo "🦁 Installing Brave browser..."
+    sudo apt install -y apt-transport-https curl
+    curl -fsSL https://brave-browser-apt-release.s3.brave.com/brave-core.asc | \
+      sudo gpg --dearmor -o /usr/share/keyrings/brave-browser-archive-keyring.gpg
+    echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main" | \
+      sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+    sudo apt update
+    sudo apt install -y brave-browser
+    echo "✅ Brave browser installed."
+  fi
+
+  # OBS Studio
+  read -p "Install OBS Studio? (y/n): " INSTALL_OBS
+  if [[ "$INSTALL_OBS" == "y" ]]; then
+    echo "🎥 Installing OBS Studio..."
+    sudo add-apt-repository ppa:obsproject/obs-studio -y
+    sudo apt update
+    sudo apt install -y obs-studio
+    echo "✅ OBS Studio installed."
+  fi
+
+  # VLC
+  read -p "Install VLC media player? (y/n): " INSTALL_VLC
+  if [[ "$INSTALL_VLC" == "y" ]]; then
+    echo "🎞️ Installing VLC media player..."
+    sudo apt install -y vlc
+    echo "✅ VLC media player installed."
+  fi
+fi
+
+
 echo "🎉 Setup complete!"
